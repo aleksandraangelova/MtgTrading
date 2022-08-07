@@ -11,3 +11,10 @@ class RegisterResource(Resource):
         data = request.get_json()
         token = TraderManager.register(data)
         return {"token": token}, 201
+
+
+class LoginResource(Resource):
+    def post(self):
+        data = request.get_json()
+        token = TraderManager.login(data)
+        return {"token": token}, 200
