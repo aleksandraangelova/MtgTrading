@@ -9,3 +9,4 @@ class Card(db.Model):
     name = db.Column(db.String(100), nullable=False)
     condition = db.Column(db.Enum(CardCondition), nullable=False)
     photo_url = db.Column(db.String(255), nullable=False)
+    owner_id = db.Column(db.Integer(), db.ForeignKey("trader.id"), nullable=False)
