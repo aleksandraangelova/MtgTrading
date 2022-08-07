@@ -12,7 +12,7 @@ class CardManager:
 
     @staticmethod
     def create(data, user):
-        data["trader_id"] = user.id
+        data["owner_id"] = user.id
         extension = data.pop("extension")
         photo = data.pop("photo")
         file_name = f"{uuid.uuid4()}.{extension}"
@@ -20,14 +20,13 @@ class CardManager:
         decode_file(path, photo)
         s3 = S3Service()
         photo_url = s3.upload_photo(path, file_name)
-
-        # try:
-        data["photo_url"] = photo_url
-        card = Card(**data)
-        db.session.add(card)
-        db.session.flush()
-        #     return card
-        # except Exception:
-        #     s3.delete_photo(key=file_name)
-        # finally:
-        #     os.remove(path)
+        try:
+            data["photo_url"] = photo_url
+            card = Card(**data)
+            db.session.add(card)
+            db.session.flush()
+            return card
+        except Exception:
+            s3.delete_photo(key=file_name)
+        finally:
+            os.remove(path)
