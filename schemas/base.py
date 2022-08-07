@@ -1,13 +1,17 @@
-from marshmallow import fields, Schema, validates, ValidationError
-from password_strength import PasswordPolicy
+from marshmallow import fields, Schema, validate, validates
+from marshmallow_enum import EnumField
 
-policy = PasswordPolicy.from_names(
-    uppercase=1,  # need min. 1 uppercase letters
-    numbers=1,  # need min. 1 digits
-    special=1,  # need min. 1 special characters
-    nonletters=1,  # need min. 1 non-letter characters (digits, specials, anything)
-)
+from models.enum import CardCondition
 
 
 class AuthBase(Schema):
     email = fields.Email(required=True)
+
+
+class CardBase(Schema):
+    name = fields.Str(required=True, validate=validate.Length(min=8, max=100))
+    set = fields.Str(required=True, validate=validate.Length(min=8, max=100))
+    condition = EnumField(CardCondition)
+    tradeable = fields.Boolean(required=True)
+    foil = fields.Boolean(required=True)
+
