@@ -1,13 +1,21 @@
-from marshmallow import fields, validate
+from marshmallow import fields, validate, validates, ValidationError
 
 from schemas.base import AuthBase
+from utils.validations import policy
 
 
 class RegisterSchemaRequest(AuthBase):
     first_name = fields.Str(required=True, validate=validate.Length(min=2, max=25))
     last_name = fields.Str(required=True, validate=validate.Length(min=2, max=25))
     city = fields.Str(required=True, validate=validate.Length(min=2, max=20))
+    password = fields.Str(required=True)
+
+    @validates("password")
+    def validate_password(self, password):
+        errors = policy.test(password)
+        if errors:
+            raise ValidationError("Password does not meet requirements")
 
 
 class LoginSchemaRequest(AuthBase):
-    pass
+    password = fields.Str(required=True)

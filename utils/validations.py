@@ -1,4 +1,3 @@
-from marshmallow import fields, Schema, validates, ValidationError
 from password_strength import PasswordPolicy
 
 policy = PasswordPolicy.from_names(
@@ -6,8 +5,5 @@ policy = PasswordPolicy.from_names(
     numbers=1,  # need min. 1 digits
     special=1,  # need min. 1 special characters
     nonletters=1,  # need min. 1 non-letter characters (digits, specials, anything)
+    length=8 # need min. 8 characters
 )
-
-
-class AuthBase(Schema):
-    email = fields.Email(required=True)
