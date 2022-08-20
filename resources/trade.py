@@ -7,7 +7,7 @@ from models import Trade
 from schemas.responses.trade import TradeSchemaResponse
 from schemas.base import TradeBase
 
-from utils.decorators import validate_schema
+from utils.decorators import validate_schema, validate_current_user_can_see_trade_details
 
 
 class TradeResource(Resource):
@@ -23,6 +23,7 @@ class TradeResource(Resource):
 
 class TradeDetailsResource(Resource):
     @auth.login_required
+    @validate_current_user_can_see_trade_details()
     def get(self, trade_id):
         trade = Trade.query.filter_by(id=trade_id).first()
         return TradeSchemaResponse().dump(trade), 201
