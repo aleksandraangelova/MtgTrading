@@ -4,10 +4,10 @@ from flask_restful import Resource
 from managers.auth import auth
 from managers.trade import TradeManager
 from models import Trade
-from schemas.responses.trade import TradeSchemaResponse
 from schemas.base import TradeBase
-
-from utils.decorators import validate_schema, validate_current_user_can_see_trade_details
+from schemas.responses.trade import TradeSchemaResponse
+from utils.decorators import (validate_current_user_can_see_trade_details,
+                              validate_schema)
 
 
 class TradeResource(Resource):
