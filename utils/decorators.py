@@ -17,11 +17,11 @@ def validate_schema(schema_name):
     return decorated_function
 
 
-def permission_required(uid):
+def permission_required():
     def decorated_function(func):
         def wrapper(*args, **kwargs):
             current_user = auth.current_user()
-            if not current_user.id == uid:
+            if not current_user.id == kwargs["uid"]:
                 raise Forbidden("Permission denied")
             return func(*args, **kwargs)
         return wrapper

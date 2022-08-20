@@ -1,5 +1,6 @@
 from db import db
 from models.trade import Trade
+from utils.decorators import permission_required
 
 
 class TradeManager:
