@@ -1,11 +1,12 @@
-from marshmallow import Schema, fields
+from marshmallow import fields
+from marshmallow_enum import EnumField
 
+from models import CardCondition
 from schemas.base import CardBase
 
 
-class CardSchemaResponse(Schema):
-    # TODO: Figure out how to parse enum field
-    id = fields.Int(required=True)
-    photo_url = fields.String(required=True)
+class CardSchemaResponse(CardBase):
+    # TODO: Figure out how to use the EnumField
+    condition = fields.String()
 
 

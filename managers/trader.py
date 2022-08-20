@@ -16,10 +16,10 @@ class TraderManager:
 
     @staticmethod
     def login(login_data):
-        complainer = TraderModel.query.filter_by(email=login_data["email"]).first()
-        if not complainer:
+        trader = TraderModel.query.filter_by(email=login_data["email"]).first()
+        if not trader:
             raise BadRequest("No such email! Please register!")
 
-        if check_password_hash(complainer.password, login_data["password"]):
-            return AuthManager.encode_token(complainer)
+        if check_password_hash(trader.password, login_data["password"]):
+            return AuthManager.encode_token(trader)
         raise BadRequest("Wrong credentials!")
