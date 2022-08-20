@@ -30,3 +30,8 @@ class CardManager:
             s3.delete_photo(key=file_name)
         finally:
             os.remove(path)
+
+    @staticmethod
+    def get_cards_owned(uid):
+        cards = Card.query.filter_by(owner_id=uid).all()
+        return cards
