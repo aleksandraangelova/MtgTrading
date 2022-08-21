@@ -1,3 +1,5 @@
+from werkzeug.exceptions import Forbidden
+
 from db import db
 from models.card import Card
 from models.enum import TradeStatus
@@ -8,6 +10,10 @@ from utils.common import get_trade
 class TradeManager:
     @staticmethod
     def create(data, user):
+
+        if data["counterparty_id"] == user.id:
+            raise Forbidden("Trade denied. You cannot make a trade with yourself!")
+
         data["requester_id"] = user.id
         trade = Trade(**data)
         db.session.add(trade)
