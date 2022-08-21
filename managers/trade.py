@@ -37,3 +37,12 @@ class TradeManager:
             Card.query.filter_by(id=card).update(
                 dict(owner_id=counterparty_id, tradeable=False)
             )
+
+        resp = {
+            "trade_id": trade_id,
+            "trade_status": TradeStatus.approved.value,
+            "transferred_to_requester": cards_for_requester,
+            "transferred_to_counterparty": cards_for_counterparty,
+        }
+
+        return resp
