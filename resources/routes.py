@@ -1,6 +1,6 @@
 from resources.auth import RegisterResource, LoginResource
 from resources.card import CardResource
-from resources.trade import TradeResource, TradeDetailsResource
+from resources.trade import TradeResource, TradeDetailsResource, ApproveTradeResource
 from resources.trader import TraderCardsResource
 
 routes = (
@@ -9,5 +9,6 @@ routes = (
     (CardResource, "/card/"),
     (TraderCardsResource, "/trader/<int:uid>/cards/"),
     (TradeResource, "/trade/"),
-    (TradeDetailsResource, "/trade/<int:trade_id>/details"),
+    (TradeDetailsResource, "/trade/<int:trade_id>/details/"),
+    (ApproveTradeResource, "/trade/<int:trade_id>/approve/"),
 )

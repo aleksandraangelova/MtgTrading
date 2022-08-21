@@ -50,5 +50,23 @@ def validate_current_user_can_see_trade_details():
     return decorated_function
 
 
+def validate_current_user_is_trade_counterparty():
+    def decorated_function(func):
+        def wrapper(*args, **kwargs):
+            current_user = auth.current_user()
+            trade_id = kwargs["trade_id"]
+
+            data = Trade.query.filter(
+                (Trade.id == trade_id)
+                & (Trade.counterparty_id == current_user.id)
+            ).first()
+
+            if not data:
+                raise Forbidden("Permission denied. You are not a counterparty to the trade.")
+            return func(*args, **kwargs)
+        return wrapper
+    return decorated_function
+
+
 def current_user_is_not_trade_party(trade: Trade, uid):
     return trade.requester_id != uid and trade.counterparty_id != uid
