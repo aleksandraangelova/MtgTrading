@@ -35,3 +35,8 @@ class CardManager:
     def get_cards_owned(uid):
         cards = Card.query.filter_by(owner_id=uid).all()
         return cards
+
+    @staticmethod
+    def get_cards_for_trade():
+        cards = Card.query.filter_by(tradeable=True).all()
+        return cards
