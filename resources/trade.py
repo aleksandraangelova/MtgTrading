@@ -39,3 +39,12 @@ class ApproveTradeResource(Resource):
         TradeManager.approve_trade(trade_id)
         resp = TradeManager.change_traded_cards_ownership(trade_id)
         return resp, 201
+
+
+class RejectTradeResource(Resource):
+    @auth.login_required
+    @validate_current_user_is_trade_counterparty()
+    @validate_trade_status()
+    def put(self, trade_id):
+        resp = TradeManager.reject_trade(trade_id)
+        return resp, 201

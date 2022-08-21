@@ -46,3 +46,11 @@ class TradeManager:
         }
 
         return resp
+
+    @staticmethod
+    def reject_trade(trade_id):
+        Trade.query.filter_by(id=trade_id).update(dict(status=TradeStatus.rejected))
+        resp = {"trade_id": trade_id,
+                "trade_status": TradeStatus.rejected.value
+                }
+        return resp
