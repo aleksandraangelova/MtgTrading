@@ -37,4 +37,5 @@ class ApproveTradeResource(Resource):
     @validate_trade_status()
     def put(self, trade_id):
         TradeManager.approve_trade(trade_id)
+        TradeManager.change_traded_cards_ownership(trade_id)
         return 201
