@@ -35,4 +35,5 @@ class ApproveTradeResource(Resource):
     @auth.login_required
     @validate_current_user_is_trade_counterparty()
     def put(self, trade_id):
+        TradeManager.approve_trade(trade_id)
         return 201

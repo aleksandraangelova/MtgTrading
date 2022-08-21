@@ -1,6 +1,6 @@
 from db import db
 from models.trade import Trade
-from utils.decorators import validate_current_user_equals_param_uid
+from models.enum import TradeStatus
 
 
 class TradeManager:
@@ -11,3 +11,9 @@ class TradeManager:
         trade = Trade(**data)
         db.session.add(trade)
         return trade
+
+    @staticmethod
+    def approve_trade(trade_id):
+        Trade.query.filter_by(id=trade_id).update(dict(status=TradeStatus.approved))
+
+
