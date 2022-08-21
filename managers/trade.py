@@ -11,6 +11,7 @@ class TradeManager:
         data["requester_id"] = user.id
         trade = Trade(**data)
         db.session.add(trade)
+        db.session.flush()
         return trade
 
     @staticmethod

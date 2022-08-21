@@ -1,4 +1,4 @@
-from marshmallow import fields, validate, validates, ValidationError
+from marshmallow import ValidationError, fields, validate, validates
 
 from schemas.base import AuthBase
 from utils.validations import policy

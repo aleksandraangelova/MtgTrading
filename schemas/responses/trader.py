@@ -5,5 +5,5 @@ from schemas.responses.card import CardSchemaResponse
 
 class TraderCardsResponseSchema(Schema):
     id = fields.Integer()
-    # TODO: return full_name
+    full_name = fields.Str(required=True)
     cards = fields.List(fields.Nested(CardSchemaResponse), many=True)

@@ -3,11 +3,10 @@ from flask_restful import Resource
 
 from managers.auth import auth
 from managers.card import CardManager
-from models import UserRole
 from schemas.requests.card import CardSchemaRequest
 from schemas.responses.card import CardSchemaResponse
 
-from utils.decorators import validate_current_user_equals_param_uid, validate_schema
+from utils.decorators import validate_schema
 
 
 class CardResource(Resource):

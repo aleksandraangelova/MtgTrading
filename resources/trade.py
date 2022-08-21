@@ -18,8 +18,8 @@ class TradeResource(Resource):
         data = request.get_json()
         current_user = auth.current_user()
         new_trade = TradeManager.create(data, current_user)
-        # TODO: Figure out how to return the id and status
-        return 201
+        resp = TradeSchemaResponse().dump(new_trade)
+        return resp, 201
 
 
 class TradeDetailsResource(Resource):
