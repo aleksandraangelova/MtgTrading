@@ -6,7 +6,7 @@ from managers.trade import TradeManager
 from models import Trade
 from schemas.requests.trade import TradeRequestSchema
 from schemas.responses.trade import (TradeBaseResponseSchema,
-                                     TradeFinalizedResponseSchema)
+                                     TradeFinalizedResponseSchema, GetTradesResponseSchema)
 from utils.decorators import (validate_current_user_can_see_trade_details,
                               validate_current_user_is_trade_counterparty,
                               validate_schema, validate_trade_status)
@@ -22,13 +22,21 @@ class TradeResource(Resource):
         resp = TradeBaseResponseSchema().dump(new_trade)
         return resp, 201
 
+    @auth.login_required
+    def get(self):
+        current_user = auth.current_user()
+        trades = TradeManager.get_trades(current_user)
+        data = {"trades": trades}
+        resp = GetTradesResponseSchema().dump(data)
+        return resp, 200
+
 
 class TradeDetailsResource(Resource):
     @auth.login_required
     @validate_current_user_can_see_trade_details()
     def get(self, trade_id):
         trade = Trade.query.filter_by(id=trade_id).first()
-        return TradeBaseResponseSchema().dump(trade), 201
+        return TradeBaseResponseSchema().dump(trade), 200
 
 
 class ApproveTradeResource(Resource):
@@ -39,7 +47,7 @@ class ApproveTradeResource(Resource):
         TradeManager.approve_trade(trade_id)
         data = TradeManager.change_traded_cards_ownership(trade_id)
         resp = TradeFinalizedResponseSchema().dump(data)
-        return resp, 201
+        return resp, 200
 
 
 class RejectTradeResource(Resource):
@@ -49,4 +57,4 @@ class RejectTradeResource(Resource):
     def put(self, trade_id):
         data = TradeManager.reject_trade(trade_id)
         resp = TradeFinalizedResponseSchema().dump(data)
-        return resp, 201
+        return resp, 200

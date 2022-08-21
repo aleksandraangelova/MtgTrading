@@ -4,7 +4,7 @@ from flask_restful import Resource
 from managers.auth import auth
 from managers.card import CardManager
 from schemas.requests.card import CardSchemaRequest
-from schemas.responses.card import CardResponseSchema, CardsTradeableResponseSchema, CardsTradeableSchema
+from schemas.responses.card import CardResponseSchema, CardsTradeableResponseSchema
 
 from utils.decorators import validate_schema
 

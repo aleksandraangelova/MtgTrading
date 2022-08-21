@@ -21,6 +21,11 @@ class TradeManager:
         return trade
 
     @staticmethod
+    def get_trades(user):
+        trades = Trade.query.filter((user.id == Trade.requester_id) | (user.id == Trade.counterparty_id)).all()
+        return trades
+
+    @staticmethod
     def approve_trade(trade_id):
         Trade.query.filter_by(id=trade_id).update(dict(status=TradeStatus.approved))
 

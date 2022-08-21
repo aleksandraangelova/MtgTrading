@@ -2,7 +2,7 @@ from flask import request
 from werkzeug.exceptions import BadRequest, Forbidden
 
 from managers.auth import auth
-from models import Trade
+from models import Trade, Card
 from models.enum import TradeStatus
 
 
@@ -86,3 +86,4 @@ def validate_trade_status():
 
 def current_user_is_not_trade_party(trade: Trade, uid):
     return trade.requester_id != uid and trade.counterparty_id != uid
+

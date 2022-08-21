@@ -13,3 +13,14 @@ class TradeBaseResponseSchema(Schema):
 class TradeFinalizedResponseSchema(TradeBaseResponseSchema):
     transferred_to_requester = fields.List(fields.Int)
     transferred_to_counterparty = fields.List(fields.Int)
+
+
+class TradeResponseSchema(TradeBaseResponseSchema):
+    requester_id = fields.Integer()
+    counterparty_id = fields.Integer()
+    requester_cards = fields.List(fields.Int)
+    counterparty_cards = fields.List(fields.Int)
+
+
+class GetTradesResponseSchema(Schema):
+    trades = fields.List(fields.Nested(TradeResponseSchema), many=True)
