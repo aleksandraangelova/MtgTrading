@@ -22,7 +22,8 @@ class CardResource(Resource):
 class CardsTradeableResource(Resource):
     @auth.login_required
     def get(self):
-        cards = CardManager.get_cards_for_trade()
-        # TODO: Understand why it returns empty response
-        resp = CardsTradeableResponseSchema().dump(cards)
+        uid = auth.current_user().id
+        cards = CardManager.get_cards_for_trade(uid)
+        data = {"cards": cards}
+        resp = CardsTradeableResponseSchema().dump(data)
         return resp, 201

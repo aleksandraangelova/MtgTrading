@@ -8,9 +8,9 @@ class CardResponseSchema(CardBase):
     condition = fields.String()
 
 
-class CardsTradeableSchema(CardResponseSchema):
+class CardsTradeableSchema(CardBase):
     owner_id = fields.String()
 
 
 class CardsTradeableResponseSchema(Schema):
-    cards = fields.List(fields.Nested(CardBase), many=True)
+    cards = fields.List(fields.Nested(CardsTradeableSchema), many=True)

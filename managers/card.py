@@ -9,7 +9,6 @@ from utils.common import decode_file
 
 
 class CardManager:
-
     @staticmethod
     def create(data, user):
         data["owner_id"] = user.id
@@ -37,6 +36,8 @@ class CardManager:
         return cards
 
     @staticmethod
-    def get_cards_for_trade():
-        cards = Card.query.filter_by(tradeable=True).all()
+    def get_cards_for_trade(uid):
+        cards = (
+            Card.query.filter(Card.tradeable == True).filter(Card.owner_id != uid).all()
+        )
         return cards
