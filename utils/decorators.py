@@ -3,6 +3,7 @@ from werkzeug.exceptions import BadRequest, Forbidden
 
 from managers.auth import auth
 from models import Trade
+from models.enum import TradeStatus
 
 
 def validate_schema(schema_name):
@@ -63,6 +64,21 @@ def validate_current_user_is_trade_counterparty():
 
             if not data:
                 raise Forbidden("Permission denied. You are not a counterparty to the trade.")
+            return func(*args, **kwargs)
+        return wrapper
+    return decorated_function
+
+
+def validate_trade_status():
+    def decorated_function(func):
+        def wrapper(*args, **kwargs):
+            trade_id = kwargs["trade_id"]
+            trade = Trade.query.filter(
+                (Trade.id == trade_id)
+            ).first()
+
+            if trade.status != TradeStatus.pending:
+                raise Forbidden("Permission denied. You can only approve or reject a pending trade.")
             return func(*args, **kwargs)
         return wrapper
     return decorated_function

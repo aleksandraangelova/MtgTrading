@@ -8,7 +8,7 @@ from schemas.base import TradeBase
 from schemas.responses.trade import TradeSchemaResponse
 from utils.decorators import (validate_current_user_can_see_trade_details,
                               validate_current_user_is_trade_counterparty,
-                              validate_schema)
+                              validate_schema, validate_trade_status)
 
 
 class TradeResource(Resource):
@@ -34,6 +34,7 @@ class TradeDetailsResource(Resource):
 class ApproveTradeResource(Resource):
     @auth.login_required
     @validate_current_user_is_trade_counterparty()
+    @validate_trade_status()
     def put(self, trade_id):
         TradeManager.approve_trade(trade_id)
         return 201

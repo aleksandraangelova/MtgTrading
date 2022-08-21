@@ -1,6 +1,7 @@
 from db import db
 from models.trade import Trade
 from models.enum import TradeStatus
+from utils.decorators import validate_trade_status
 
 
 class TradeManager:
