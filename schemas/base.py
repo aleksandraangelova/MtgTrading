@@ -1,4 +1,4 @@
-from marshmallow import fields, Schema, validate, validates
+from marshmallow import Schema, fields, validate
 from marshmallow_enum import EnumField
 
 from models.enum import CardCondition
@@ -14,9 +14,3 @@ class CardBase(Schema):
     condition = EnumField(CardCondition)
     tradeable = fields.Boolean(required=True)
     foil = fields.Boolean(required=True)
-
-
-class TradeBase(Schema):
-    requester_cards = fields.List(fields.Integer, required=True)
-    counterparty_id = fields.Integer(required=True)
-    counterparty_cards = fields.List(fields.Integer)

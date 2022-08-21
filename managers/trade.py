@@ -46,8 +46,8 @@ class TradeManager:
             )
 
         resp = {
-            "trade_id": trade_id,
-            "trade_status": TradeStatus.approved.value,
+            "id": trade_id,
+            "status": TradeStatus.approved,
             "transferred_to_requester": cards_for_requester,
             "transferred_to_counterparty": cards_for_counterparty,
         }
@@ -57,7 +57,9 @@ class TradeManager:
     @staticmethod
     def reject_trade(trade_id):
         Trade.query.filter_by(id=trade_id).update(dict(status=TradeStatus.rejected))
-        resp = {"trade_id": trade_id,
-                "trade_status": TradeStatus.rejected.value
+        resp = {"id": trade_id,
+                "status": TradeStatus.rejected,
+                "transferred_to_requester": [],
+                "transferred_to_counterparty": [],
                 }
         return resp
