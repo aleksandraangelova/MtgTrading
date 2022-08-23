@@ -4,9 +4,8 @@ from db import db
 from models.card import Card
 from models.enum import TradeStatus
 from models.trade import Trade
-from utils.common import get_trade
-
 from services.aws_ses import SESService
+from utils.common import get_trade
 
 
 class TradeManager:
@@ -30,7 +29,9 @@ class TradeManager:
 
     @staticmethod
     def get_trades(user):
-        trades = Trade.query.filter((user.id == Trade.requester_id) | (user.id == Trade.counterparty_id)).all()
+        trades = Trade.query.filter(
+            (user.id == Trade.requester_id) | (user.id == Trade.counterparty_id)
+        ).all()
         return trades
 
     @staticmethod
@@ -70,9 +71,10 @@ class TradeManager:
     @staticmethod
     def reject_trade(trade_id):
         Trade.query.filter_by(id=trade_id).update(dict(status=TradeStatus.rejected))
-        resp = {"id": trade_id,
-                "status": TradeStatus.rejected,
-                "transferred_to_requester": [],
-                "transferred_to_counterparty": [],
-                }
+        resp = {
+            "id": trade_id,
+            "status": TradeStatus.rejected,
+            "transferred_to_requester": [],
+            "transferred_to_counterparty": [],
+        }
         return resp

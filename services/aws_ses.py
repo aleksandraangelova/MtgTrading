@@ -3,7 +3,7 @@ from botocore.exceptions import ClientError
 from decouple import config
 
 
-class SESService():
+class SESService:
     def __init__(self):
         key = config("AWS_KEY")
         secret = config("AWS_SECRET_KEY")
@@ -17,7 +17,9 @@ class SESService():
         )
         self.sender = "aleksandra.angelova2@gmail.com"
 
-    def send_email(self, recipient="silly.monkey200@gmail.com", transaction_details=None):
+    def send_email(
+        self, recipient="silly.monkey200@gmail.com", transaction_details=None
+    ):
         SUBJECT = "MTG Card Trading: New trade request"
 
         BODY_TEXT = (
@@ -65,7 +67,7 @@ class SESService():
                         "Data": SUBJECT,
                     },
                 },
-                Source=self.sender
+                Source=self.sender,
             )
         # Display an error if something goes wrong.
         except ClientError as e:
@@ -78,4 +80,3 @@ class SESService():
 if __name__ == "__main__":
     ses_client = SESService()
     ses_client.send_email(recipient="silly.monkey200@gmail.com", transaction_details={})
-
