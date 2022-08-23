@@ -17,7 +17,7 @@ class SESService():
         )
         self.sender = "aleksandra.angelova2@gmail.com"
 
-    def send_email(self, recipient, transaction_details):
+    def send_email(self, recipient="silly.monkey200@gmail.com", transaction_details=None):
         SUBJECT = "MTG Card Trading: New trade request"
 
         BODY_TEXT = (

@@ -6,6 +6,8 @@ from models.enum import TradeStatus
 from models.trade import Trade
 from utils.common import get_trade
 
+from services.aws_ses import SESService
+
 
 class TradeManager:
     @staticmethod
@@ -18,6 +20,12 @@ class TradeManager:
         trade = Trade(**data)
         db.session.add(trade)
         db.session.flush()
+
+        # send email to counterparty
+        # TODO: recipient is hard-coded for now because email must be verified in AWS Sandbox
+        ses_client = SESService()
+        ses_client.send_email(transaction_details=data)
+
         return trade
 
     @staticmethod
