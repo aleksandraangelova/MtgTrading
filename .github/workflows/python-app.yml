@@ -28,6 +28,7 @@ jobs:
       env:
         JWT_SECRET: ""
         DB_PASSWORD: admin
+        DB_USER: admin
         DB_PORT: 5432
         DB_NAME: test_db
         AWS_KEY: ""
