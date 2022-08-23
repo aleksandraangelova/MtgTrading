@@ -1,0 +1,19 @@
+openapi: 3.0.3
+info:
+  title: Magic the Gathering (MTG) Card Trading Application
+  description: |-
+    This is a Magic the Gathering (MTG) card trading application that allows you to keep a collection of your cards and
+    make them available for trading with your friends.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1
+servers:
+  - url: /
+tags:
+  - name: card
+    description: Manage the cards in your collection.
+  - name: user
+    description: Sign up and login functionality.
+  - name: trade
+    description: Create trades with other users and swap cards from your collections.
