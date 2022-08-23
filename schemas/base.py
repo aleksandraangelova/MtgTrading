@@ -11,6 +11,6 @@ class AuthBase(Schema):
 class CardBase(Schema):
     name = fields.Str(required=True, validate=validate.Length(min=8, max=100))
     set = fields.Str(required=True, validate=validate.Length(min=8, max=100))
-    condition = EnumField(CardCondition)
+    condition = EnumField(CardCondition, required=True)
     tradeable = fields.Boolean(required=True)
     foil = fields.Boolean(required=True)
