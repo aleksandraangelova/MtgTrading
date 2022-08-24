@@ -128,3 +128,17 @@ class TestComplaint(TestCase):
         resp = self.client.post(url, headers=headers, json=data)
         self.assert400(resp)
         assert resp.json == {"message": {"first_name": ["Length must be between 2 and 25."]}}
+
+    def test_register_schema_raises_invalid_password(self):
+        data = {
+            "first_name": "Test",
+            "last_name": "test",
+            "city": "Sofia",
+            "email": "test@test.com",
+            "password": "123@456sd1"
+        }
+        url = "/register/"
+        headers = {"Content-Type": "application/json"}
+        resp = self.client.post(url, headers=headers, json=data)
+        self.assert400(resp)
+        assert resp.json == {"message": {'password': ['Password does not meet requirements']}}
