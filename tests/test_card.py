@@ -107,7 +107,7 @@ class TestComplaint(TestCase):
             "last_name": "test",
             "city": "Sofia",
             "email": "test@test.com",
-            "password": "123@456asd1"
+            "password": "123@456Asd1"
         }
         url = "/register/"
         headers = {"Content-Type": "application/json"}
@@ -121,10 +121,10 @@ class TestComplaint(TestCase):
         data["first_name"] = "A"
         resp = self.client.post(url, headers=headers, json=data)
         self.assert400(resp)
-        assert resp.json == {"message": {"first_name": ["Length must be between 2 and 20."]}}
+        assert resp.json == {"message": {"first_name": ["Length must be between 2 and 25."]}}
 
         # Too long first name
-        data["first_name"] = "AAAAAAAAAAAAAAAAAAAAAA"
+        data["first_name"] = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         resp = self.client.post(url, headers=headers, json=data)
         self.assert400(resp)
-        assert resp.json == {"message": {"first_name": ["Length must be between 2 and 20."]}}
+        assert resp.json == {"message": {"first_name": ["Length must be between 2 and 25."]}}

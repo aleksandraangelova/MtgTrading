@@ -98,7 +98,7 @@ def validate_current_user_is_trade_requester():
 
             try:
                 if trade.requester_id != current_user.id:
-                    raise Forbidden("Permission denied. You can only delete your own trades.")
+                    raise Forbidden("Permission denied. You can only update or delete your own trades.")
                 return func(*args, **kwargs)
             except AttributeError:
                 raise BadRequest("Trade not found.")

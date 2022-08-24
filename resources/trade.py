@@ -5,11 +5,13 @@ from managers.auth import auth
 from managers.trade import TradeManager
 from models import Trade
 from schemas.requests.trade import TradeRequestSchema
-from schemas.responses.trade import (TradeBaseResponseSchema,
-                                     TradeFinalizedResponseSchema, GetTradesResponseSchema)
+from schemas.responses.trade import (GetTradesResponseSchema,
+                                     TradeBaseResponseSchema,
+                                     TradeFinalizedResponseSchema)
 from utils.decorators import (validate_current_user_can_see_trade_details,
                               validate_current_user_is_trade_counterparty,
-                              validate_schema, validate_trade_status, validate_current_user_is_trade_requester)
+                              validate_current_user_is_trade_requester,
+                              validate_schema, validate_trade_status)
 
 
 class TradeCreateResource(Resource):
@@ -44,6 +46,15 @@ class TradeResource(Resource):
     def delete(self, trade_id):
         TradeManager.delete_trade(trade_id)
         return {"message": f"Trade {trade_id} deleted successfully"}, 200
+
+    @auth.login_required
+    @validate_schema(TradeRequestSchema)
+    @validate_current_user_is_trade_requester()
+    @validate_trade_status()
+    def put(self, trade_id):
+        data = request.get_json()
+        TradeManager.update_trade(trade_id, updates_dict=data)
+        return {"message": f"Trade {trade_id} updated successfully"}, 200
 
 
 class ApproveTradeResource(Resource):
