@@ -35,6 +35,10 @@ class TradeManager:
         return trades
 
     @staticmethod
+    def delete_trade(trade_id):
+        Trade.query.filter_by(id=trade_id).delete()
+
+    @staticmethod
     def approve_trade(trade_id):
         Trade.query.filter_by(id=trade_id).update(dict(status=TradeStatus.approved))
 

@@ -9,10 +9,10 @@ from schemas.responses.trade import (TradeBaseResponseSchema,
                                      TradeFinalizedResponseSchema, GetTradesResponseSchema)
 from utils.decorators import (validate_current_user_can_see_trade_details,
                               validate_current_user_is_trade_counterparty,
-                              validate_schema, validate_trade_status)
+                              validate_schema, validate_trade_status, validate_current_user_is_trade_requester)
 
 
-class TradeResource(Resource):
+class TradeCreateResource(Resource):
     @auth.login_required
     @validate_schema(TradeRequestSchema)
     def post(self):
@@ -31,12 +31,19 @@ class TradeResource(Resource):
         return resp, 200
 
 
-class TradeDetailsResource(Resource):
+class TradeResource(Resource):
     @auth.login_required
     @validate_current_user_can_see_trade_details()
     def get(self, trade_id):
         trade = Trade.query.filter_by(id=trade_id).first()
         return TradeBaseResponseSchema().dump(trade), 200
+
+    @auth.login_required
+    @validate_current_user_is_trade_requester()
+    @validate_trade_status()
+    def delete(self, trade_id):
+        TradeManager.delete_trade(trade_id)
+        return {"message": f"Trade {trade_id} deleted successfully"}, 200
 
 
 class ApproveTradeResource(Resource):

@@ -77,9 +77,31 @@ def validate_trade_status():
                 (Trade.id == trade_id)
             ).first()
 
-            if trade.status != TradeStatus.pending:
-                raise Forbidden("Permission denied. You can only approve or reject a pending trade.")
-            return func(*args, **kwargs)
+            try:
+                if trade.status != TradeStatus.pending:
+                    raise Forbidden("Permission denied. You can only manage pending trades.")
+                return func(*args, **kwargs)
+            except AttributeError:
+                raise BadRequest("Trade not found.")
+        return wrapper
+    return decorated_function
+
+
+def validate_current_user_is_trade_requester():
+    def decorated_function(func):
+        def wrapper(*args, **kwargs):
+            current_user = auth.current_user()
+            trade_id = kwargs["trade_id"]
+            trade = Trade.query.filter(
+                (Trade.id == trade_id)
+            ).first()
+
+            try:
+                if trade.requester_id != current_user.id:
+                    raise Forbidden("Permission denied. You can only delete your own trades.")
+                return func(*args, **kwargs)
+            except AttributeError:
+                raise BadRequest("Trade not found.")
         return wrapper
     return decorated_function
 
