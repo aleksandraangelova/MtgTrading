@@ -9,7 +9,8 @@ ENDPOINTS_DATA = (
     ("/trader/1/cards/", "GET"),
     ("/trade/", "POST"),
     ("/trade/", "GET"),
-    ("/trade/1/details/", "GET"),
+    ("/trade/1/", "GET"),
+    ("/trade/1/", "DELETE"),
     ("/trade/1/approve/", "PUT"),
     ("/trade/1/reject/", "PUT"),
     ("/cards/tradeable", "GET")
