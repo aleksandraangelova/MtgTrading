@@ -22,9 +22,10 @@ The application was developed and tested using Python 3.10.5.
 
 ### Set up Postgres
 Create a Postgres database to host the application's data and paste the credentials in a .env file in the project's root 
-directory.   
+directory. The migrations expect a database called mtgtrading to exist.  
 
 The application expects the following environment variables in a .env file on your local machine.
+Make sure you create your Postgres database in advance.
 
 ### .env file
     JWT_SECRET=
@@ -41,3 +42,12 @@ The application expects the following environment variables in a .env file on yo
     TEST_DB_PORT=
     TEST_DB_NAME=
 
+### Provide the Flask environment variable
+    set FLASK_APP=./main.py
+
+### Create the database objects
+    flask db upgrade
+
+You are ready to run the application from `main.py`
+
+Swagger documentation of the application is available at (http://127.0.0.1:5000/api/docs/)
