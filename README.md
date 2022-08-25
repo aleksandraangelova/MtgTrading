@@ -50,4 +50,50 @@ Make sure you create your Postgres database in advance.
 
 You are ready to run the application from `main.py`
 
-Swagger documentation of the application is available at (http://127.0.0.1:5000/api/docs/)
+Swagger documentation of the application is available at (http://127.0.0.1:5000/api/docs/) but is currently incomplete.
+
+
+## REST API
+The following endpoints are available:
+
+### User Register
+Public endpoint.
+
+#### Request
+
+`POST /register/`
+
+    curl --location --request POST 'http://127.0.0.1:5000/register/' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{"first_name": "Aleksandra", "last_name": "Angelova", "city": "Sofia", "email": "a.angelova@test.com", "password": "password"}'
+
+#### Response
+    {
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOm51bGwsImV4cCI6MTY2MTYxNzQwMX0.mGrF0bsKMeC5CdG1OZuY6r3Wd5jV_9h5LxZ43DmhpSs"
+    }
+
+### User Login
+Public endpoint.
+
+### Request
+
+`POST /login/`
+
+    curl --location --request POST 'http://127.0.0.1:5000/login/' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{"email": "a.angelova@test.com", "password": "password"}'
+
+#### Response
+
+    {
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImV4cCI6MTY2MTYxOTcxMX0.Z01oY6BBgSX8N13l3M9Es_28Yq-m_uoI4lFgKMeeGxk"
+    }
+
+### Create Card
+Private endpoint accessible only to users who are logged in.
+
+#### Request
+
+`POST /card/`
+
+

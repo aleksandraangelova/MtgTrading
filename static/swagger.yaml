@@ -17,3 +17,42 @@ tags:
     description: Sign up and login functionality.
   - name: trade
     description: Create trades with other users and swap cards from your collections.
+paths:
+  /register/:
+    post:
+      tags:
+        - user
+      summary: Register as a trader
+      description: Register as a trader in the application
+      operationId: register
+      requestBody:
+        description: Register as a new trader
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '201':
+          description: Successful operation
+        '405':
+          description: Validation exception
+components:
+  schemas:
+    User:
+      properties:
+        first_name:
+          type: string
+          example: "Aleksandra"
+        last_name:
+          type: string
+          example: "Angelova"
+        city:
+          type: string
+          example: "Sofia"
+        email:
+          type: string
+          example: "aleksandra.angelova@test.com"
+        password:
+          type: string
+          example: "6235ADSWWSOFJgdkfghje#"
