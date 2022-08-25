@@ -6,15 +6,12 @@ from flask_testing import TestCase
 from config import create_app
 from constants.common import TEMP_DIR
 from db import db
-from managers.card import CardManager
 from models import Card, CardCondition
 from services.s3 import S3Service
-from tests.factories import TraderFactory
 from tests.helpers import (
     encoded_photo,
     encoded_photo_extension,
-    generate_token,
-    mock_uuid,
+    mock_uuid, get_headers_with_authorization,
 )
 
 
@@ -27,6 +24,7 @@ class TestCard(TestCase):
     def setUp(self):
         db.init_app(self.app)
         db.create_all()
+        self.headers = get_headers_with_authorization()
 
     def tearDown(self):
         db.session.remove()
@@ -36,14 +34,8 @@ class TestCard(TestCase):
         cards = Card.query.all()
         assert len(cards) == 0
 
-        user = TraderFactory()
-        token = generate_token(user)
-        headers = {
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-        }
         data = {}
-        resp = self.client.post(self.url, headers=headers, json=data)
+        resp = self.client.post(self.url, headers=self.headers, json=data)
         self.assert400(resp)
 
         assert resp.json["message"] == {'condition': ['Missing data for required field.'],
@@ -63,12 +55,6 @@ class TestCard(TestCase):
         cards = Card.query.all()
         assert len(cards) == 0
 
-        trader = TraderFactory()
-        token = generate_token(trader)
-        headers = {
-            "Authorization": f"Bearer {token}",
-            "Content-Type": "application/json",
-        }
         data = {
             "name": "Test Title",
             "set": "Test Set",
@@ -78,7 +64,7 @@ class TestCard(TestCase):
             "photo": encoded_photo,
             "extension": encoded_photo_extension,
         }
-        resp = self.client.post(self.url, headers=headers, json=data)
+        resp = self.client.post(self.url, headers=self.headers, json=data)
         assert resp.status_code == 201
         resp = resp.json
         expected_resp = {
@@ -98,9 +84,6 @@ class TestCard(TestCase):
         # Test DB
         cards = Card.query.all()
         assert len(cards) == 1
-
-        # # Can build what we expect in the record
-        # assert dict(complaints[0]) == {""}
 
     def test_register_schema_raises_invalid_first_name(self):
         data = {

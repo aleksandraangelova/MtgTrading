@@ -1,4 +1,5 @@
 from managers.auth import AuthManager
+from tests.factories import TraderFactory
 
 
 def generate_token(user):
@@ -12,3 +13,24 @@ encoded_photo_extension = "jpg"
 
 def mock_uuid():
     return "1111-1111-1111-1111"
+
+
+def get_headers_with_authorization():
+    user = TraderFactory()
+    token = generate_token(user)
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+    }
+    return headers
+
+
+def get_headers_with_authorization_and_user():
+    user = TraderFactory()
+    token = generate_token(user)
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Content-Type": "application/json",
+    }
+    return headers, user
+
