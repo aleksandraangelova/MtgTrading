@@ -48,13 +48,18 @@ Make sure you create your Postgres database in advance.
 ### Create the database objects
     flask db upgrade
 
+### Create temp_files directory
+Create an empty temp_files directory to store initially uploaded images before moving them to AWS.
+
 You are ready to run the application from `main.py`
 
 Swagger documentation of the application is available at (http://127.0.0.1:5000/api/docs/) but is currently incomplete.
 
 
 ## REST API
-The following endpoints are available:
+The following endpoints are available.  
+Note: Only 2XX responses are described below.  
+TODO: Describe responses != 2XX.
 
 ### User Register
 Public endpoint.
@@ -68,6 +73,8 @@ Public endpoint.
     --data-raw '{"first_name": "Aleksandra", "last_name": "Angelova", "city": "Sofia", "email": "a.angelova@test.com", "password": "password"}'
 
 #### Response
+`HTTP/1.1 201 CREATED`
+
     {
     "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOm51bGwsImV4cCI6MTY2MTYxNzQwMX0.mGrF0bsKMeC5CdG1OZuY6r3Wd5jV_9h5LxZ43DmhpSs"
     }
@@ -85,15 +92,114 @@ Public endpoint.
 
 #### Response
 
+`HTTP/1.1 200 OK`
+
     {
         "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImV4cCI6MTY2MTYxOTcxMX0.Z01oY6BBgSX8N13l3M9Es_28Yq-m_uoI4lFgKMeeGxk"
     }
 
 ### Create Card
-Private endpoint accessible only to users who are logged in.
+Private endpoint accessible only to users who are logged in.  
+Adds a new card to the user's collection. 
 
 #### Request
 
 `POST /card/`
 
+    curl --location --request POST 'http://127.0.0.1:5000/card/' \
+    --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImV4cCI6MTY2MTYyMDA5OX0.yQ1UgwNhf1AGQB4bbpR2X7aoq7KgSJs2ls_WQO2MAzc' \
+    --data-raw {"name": "Nicol Bolas", "set": "Archenemy: Nicol Bolas", "condition": "mint", "tradeable": true, "foil": false, "photo": "<base64encoded image string>", "extension": "jpg"}
 
+#### Response
+
+`HTTP/1.1 201 CREATED`
+
+    {
+        "set": "Archenemy: Nicol Bolas",
+        "tradeable": true,
+        "foil": false,
+        "name": "Nicol Bolas",
+        "condition": "mint"
+    }
+
+### Get Cards in Collection
+Private endpoint accessible only to users who are logged in.   
+Gets the cards available in a user's collection.  
+Users can only see their own collection - if they request to see the collection of another user, they will get a Forbidden response.
+
+#### Request
+`GET /trader/<id>/cards/`
+
+    curl --location --request GET 'http://127.0.0.1:5000/trader/1/cards/' \
+    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImV4cCI6MTY2MTE1NzMyN30.Xt9harrf_wdT98A9zADqMApvowe5-hOvZArzLZTAvWM'
+
+#### Response 
+`HTTP/1.1 200 OK`
+
+    {
+        "full_name": "Aleksandra Angelova",
+        "cards": [
+            {
+                "set": "Test Set",
+                "tradeable": true,
+                "foil": false,
+                "name": "Test Card 2",
+                "condition": "CardCondition.mint"
+            },
+            {
+                "set": "Test Set",
+                "tradeable": true,
+                "foil": false,
+                "name": "Test Card 2",
+                "condition": "CardCondition.mint"
+            }
+        ],
+        "id": 1
+    }
+
+### Create Trade
+Private endpoint accessible only to users who are logged in.  
+Propose a trade with another trader.  
+Users cannot create trades with themselves - there is a decorator validating that the counterparty_id != current user id.
+TODO: handle errors when the counterparty does not exist in the database or does not own the requested cards.
+
+#### Request
+`POST /trade/`
+
+    curl --location --request POST 'http://127.0.0.1:5000/trade/' \
+    --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImV4cCI6MTY2MTYyMDA5OX0.yQ1UgwNhf1AGQB4bbpR2X7aoq7KgSJs2ls_WQO2MAzc' \
+    --data-raw '{"requester_cards": [2], "counterparty_id": 6, "counterparty_cards": [3]}'
+
+#### Response
+`HTTP/1.1 201 CREATED`
+
+    {
+        "created_on": "2022-08-25T20:38:44.779071",
+        "status": "pending",
+        "id": 3
+    }
+
+### Get Trade Details
+Private endpoint accessible only to users who are logged in.  
+Get the details of a trade to which you are a party.  
+Users can only see details of trades that they are parties to - if they request to see trades of other users, they will get a Forbidden response.
+
+#### Request
+`GET /trade/<id>/`
+
+    curl --location --request GET 'http://127.0.0.1:5000/trade/3/' \
+    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjYsImV4cCI6MTY2MTYyMTgzNn0.2zjHdVHpXkMgDF4VK-gnfP54P5CAHZgmrRW28SqnOc8' \
+    --header 'Content-Type: application/json' \
+    --data-raw ''
+
+#### Response
+
+`HTTP/1.1 200 OK`
+
+    {
+        "created_on": "2022-08-25T20:38:44.779071",
+        "status": "pending",
+        "id": 3
+    }

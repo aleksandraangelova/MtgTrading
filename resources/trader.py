@@ -15,4 +15,4 @@ class TraderCardsResource(Resource):
         full_name = TraderManager.get_full_name(uid)
         data = {"id": uid, "full_name": full_name, "cards": cards_owned}
         schema = TraderCardsResponseSchema().dump(data)
-        return schema, 201
+        return schema, 200
