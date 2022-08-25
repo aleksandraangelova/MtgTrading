@@ -27,22 +27,6 @@ class TestTrade(TestCase):
         db.session.remove()
         db.drop_all()
 
-    def test_create_trade_schema_missing_fields_raises(self):
-        trades = Trade.query.all()
-        assert len(trades) == 0
-        data = {}
-        resp = self.client.post(self.url, headers=self.headers, json=data)
-        self.assert400(resp)
-
-        assert resp.json["message"] == {
-            "counterparty_cards": ["Missing data for required field."],
-            "counterparty_id": ["Missing data for required field."],
-            "requester_cards": ["Missing data for required field."],
-        }
-
-        trades = Trade.query.all()
-        assert len(trades) == 0
-
     @patch.object(SESService, "send_email")
     @patch.object(S3Service, "upload_photo", return_value="some.s3.url")
     def test_create_trade_success(self, mocked_ses, mocked_s3):
@@ -83,3 +67,19 @@ class TestTrade(TestCase):
         trades = Trade.query.all()
         assert len(trades) == 1
         assert resp.status_code == 201
+
+    def test_create_trade_schema_missing_fields_raises(self):
+        trades = Trade.query.all()
+        assert len(trades) == 0
+        data = {}
+        resp = self.client.post(self.url, headers=self.headers, json=data)
+        self.assert400(resp)
+
+        assert resp.json["message"] == {
+            "counterparty_cards": ["Missing data for required field."],
+            "counterparty_id": ["Missing data for required field."],
+            "requester_cards": ["Missing data for required field."],
+        }
+
+        trades = Trade.query.all()
+        assert len(trades) == 0
