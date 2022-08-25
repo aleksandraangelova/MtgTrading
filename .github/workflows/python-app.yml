@@ -33,7 +33,7 @@ jobs:
         DB_NAME: test_db
         AWS_KEY: ""
         AWS_SECRET_KEY: ""
-        S3_BUCKET_NAME: ""
+        S3_BUCKET_NAME: mtgtrading
         S3_REGION: ""
         TEST_DB_USER: admin
         TEST_DB_PASSWORD: admin
