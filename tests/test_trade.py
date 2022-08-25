@@ -7,6 +7,7 @@ from db import db
 from models import Card, TraderModel
 from models.trade import Trade
 from services.aws_ses import SESService
+from services.s3 import S3Service
 from tests.helpers import (encoded_photo, encoded_photo_extension,
                            get_headers_with_authorization_and_user)
 
@@ -43,7 +44,8 @@ class TestTrade(TestCase):
         assert len(trades) == 0
 
     @patch.object(SESService, "send_email")
-    def test_create_trade_success(self, mocked_ses):
+    @patch.object(S3Service, "upload_photo", return_value="some.s3.url")
+    def test_create_trade_success(self, mocked_ses, mocked_s3):
         # Prerequisites for creating a trade: counterparties exist and have cards
         self.headers_1, self.user_1 = get_headers_with_authorization_and_user()
         self.headers_2, self.user_2 = get_headers_with_authorization_and_user()
