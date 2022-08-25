@@ -304,3 +304,53 @@ Users can only see details of trades that they are parties to - if they request 
         "created_on": "2022-08-25T20:38:44.779071",
         "status": "rejected"
     }
+
+### Delete Trade
+Private endpoint accessible only to users who are logged in.  
+Delete a trade you have created and is still in pending status.  
+Only the trade creator can access this endpoint. 
+If you try to delete someone else's trade or an approved/rejected trade, you will get a Forbidden message.  
+If a trade is successfully deleted, it is removed from the trade table.
+
+#### Request
+
+`DELETE /trade/<trade_id>`
+
+    curl --location --request DELETE 'http://127.0.0.1:5000/trade/3' \
+    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImV4cCI6MTY2MTYyMDA5OX0.yQ1UgwNhf1AGQB4bbpR2X7aoq7KgSJs2ls_WQO2MAzc'
+
+#### Response
+
+`HTTP/1.1 200 OK`
+
+    {
+        "message": "Trade 3 deleted successfully"
+    }
+
+### Update Trade
+Private endpoint accessible only to users who are logged in.  
+Update a trade you have created and is still in pending status.  
+Only the trade creator can access this endpoint. 
+If you try to update someone else's trade or an approved/rejected trade, you will get a Forbidden message.  
+The trade is updated with the information sent in the request.
+
+#### Request
+
+`PUT /trade/<id>/`
+
+    curl --location --request PUT 'http://127.0.0.1:5000/trade/4' \
+    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImV4cCI6MTY2MTYyMDA5OX0.yQ1UgwNhf1AGQB4bbpR2X7aoq7KgSJs2ls_WQO2MAzc' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{"requester_cards": [2], "counterparty_id": 6, "counterparty_cards": [3]}'
+
+#### Response
+`HTTP/1.1 200 OK`
+
+    {
+        "message": "Trade 4 updated successfully"
+    }
+
+
+## Future Developments
+Integrate the backend with a front-end. Continue making improvements in the trading logic - add further validations, 
+increase test coverage, finalize the SES integration.
