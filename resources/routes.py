@@ -1,6 +1,7 @@
-from resources.auth import RegisterResource, LoginResource
+from resources.auth import LoginResource, RegisterResource
 from resources.card import CardResource, CardsTradeableResource
-from resources.trade import TradeCreateResource, TradeResource, ApproveTradeResource, RejectTradeResource
+from resources.trade import (ApproveTradeResource, RejectTradeResource,
+                             TradeCreateResource, TradeResource)
 from resources.trader import TraderCardsResource
 
 routes = (
@@ -12,5 +13,5 @@ routes = (
     (TradeResource, "/trade/<int:trade_id>/"),
     (ApproveTradeResource, "/trade/<int:trade_id>/approve/"),
     (RejectTradeResource, "/trade/<int:trade_id>/reject/"),
-    (CardsTradeableResource, "/cards/tradeable")
+    (CardsTradeableResource, "/cards/tradeable"),
 )

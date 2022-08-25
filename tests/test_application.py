@@ -13,7 +13,7 @@ ENDPOINTS_DATA = (
     ("/trade/1/", "DELETE"),
     ("/trade/1/approve/", "PUT"),
     ("/trade/1/reject/", "PUT"),
-    ("/cards/tradeable", "GET")
+    ("/cards/tradeable", "GET"),
 )
 
 
@@ -30,12 +30,12 @@ class TestApp(TestCase):
         db.drop_all()
 
     def iterate_endpoints(
-            self,
-            endpoints_data,
-            status_code_method,
-            expected_resp_body,
-            headers=None,
-            payload=None,
+        self,
+        endpoints_data,
+        status_code_method,
+        expected_resp_body,
+        headers=None,
+        payload=None,
     ):
         if not headers:
             headers = {}

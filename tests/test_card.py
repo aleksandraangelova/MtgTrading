@@ -8,11 +8,8 @@ from constants.common import TEMP_DIR
 from db import db
 from models import Card, CardCondition
 from services.s3 import S3Service
-from tests.helpers import (
-    encoded_photo,
-    encoded_photo_extension,
-    mock_uuid, get_headers_with_authorization,
-)
+from tests.helpers import (encoded_photo, encoded_photo_extension,
+                           get_headers_with_authorization, mock_uuid)
 
 
 class TestCard(TestCase):
@@ -38,13 +35,15 @@ class TestCard(TestCase):
         resp = self.client.post(self.url, headers=self.headers, json=data)
         self.assert400(resp)
 
-        assert resp.json["message"] == {'condition': ['Missing data for required field.'],
-                                        'extension': ['Missing data for required field.'],
-                                        'foil': ['Missing data for required field.'],
-                                        'name': ['Missing data for required field.'],
-                                        'photo': ['Missing data for required field.'],
-                                        'set': ['Missing data for required field.'],
-                                        'tradeable': ['Missing data for required field.']}
+        assert resp.json["message"] == {
+            "condition": ["Missing data for required field."],
+            "extension": ["Missing data for required field."],
+            "foil": ["Missing data for required field."],
+            "name": ["Missing data for required field."],
+            "photo": ["Missing data for required field."],
+            "set": ["Missing data for required field."],
+            "tradeable": ["Missing data for required field."],
+        }
 
         cards = Card.query.all()
         assert len(cards) == 0
@@ -72,7 +71,7 @@ class TestCard(TestCase):
             "set": data["set"],
             "condition": data["condition"],
             "tradeable": data["tradeable"],
-            "foil": data["foil"]
+            "foil": data["foil"],
         }
         assert resp == expected_resp
 
@@ -90,7 +89,7 @@ class TestCard(TestCase):
             "last_name": "test",
             "city": "Sofia",
             "email": "test@test.com",
-            "password": "123@456Asd1"
+            "password": "123@456Asd1",
         }
         url = "/register/"
         headers = {"Content-Type": "application/json"}
@@ -98,19 +97,25 @@ class TestCard(TestCase):
         # Missing name
         resp = self.client.post(url, headers=headers, json=data)
         self.assert400(resp)
-        assert resp.json == {"message": {"first_name": ["Missing data for required field."]}}
+        assert resp.json == {
+            "message": {"first_name": ["Missing data for required field."]}
+        }
 
         # Too short first name
         data["first_name"] = "A"
         resp = self.client.post(url, headers=headers, json=data)
         self.assert400(resp)
-        assert resp.json == {"message": {"first_name": ["Length must be between 2 and 25."]}}
+        assert resp.json == {
+            "message": {"first_name": ["Length must be between 2 and 25."]}
+        }
 
         # Too long first name
         data["first_name"] = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
         resp = self.client.post(url, headers=headers, json=data)
         self.assert400(resp)
-        assert resp.json == {"message": {"first_name": ["Length must be between 2 and 25."]}}
+        assert resp.json == {
+            "message": {"first_name": ["Length must be between 2 and 25."]}
+        }
 
     def test_register_schema_raises_invalid_password(self):
         data = {
@@ -118,10 +123,12 @@ class TestCard(TestCase):
             "last_name": "test",
             "city": "Sofia",
             "email": "test@test.com",
-            "password": "123@456sd1"
+            "password": "123@456sd1",
         }
         url = "/register/"
         headers = {"Content-Type": "application/json"}
         resp = self.client.post(url, headers=headers, json=data)
         self.assert400(resp)
-        assert resp.json == {"message": {'password': ['Password does not meet requirements']}}
+        assert resp.json == {
+            "message": {"password": ["Password does not meet requirements"]}
+        }

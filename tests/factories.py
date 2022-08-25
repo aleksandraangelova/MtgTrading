@@ -16,6 +16,7 @@ class BaseFactory(factory.Factory):
 class TraderFactory(BaseFactory):
     class Meta:
         model = TraderModel
+
     id = factory.Sequence(lambda n: n)
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")

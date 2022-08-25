@@ -2,7 +2,7 @@ from flask import request
 from flask_restful import Resource
 
 from managers.trader import TraderManager
-from schemas.requests.auth import RegisterSchemaRequest, LoginSchemaRequest
+from schemas.requests.auth import LoginSchemaRequest, RegisterSchemaRequest
 from utils.decorators import validate_schema
 
 

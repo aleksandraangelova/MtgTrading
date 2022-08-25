@@ -22,4 +22,3 @@ class TraderModel(BaseUserModel):
 class AdminModel(BaseUserModel):
     __tablename__ = "admin"
     role = db.Column(db.Enum(UserRole), default=UserRole.admin, nullable=False)
-
