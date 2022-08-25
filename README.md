@@ -22,7 +22,7 @@ The application was developed and tested using Python 3.10.5.
 
 ### Set up Postgres
 Create a Postgres database to host the application's data and paste the credentials in a .env file in the project's root 
-directory. The migrations expect a database called mtgtrading to exist.  
+directory. The migrations expect a database called `mtgtrading` to exist.  
 
 The application expects the following environment variables in a .env file on your local machine.
 Make sure you create your Postgres database in advance.
@@ -100,6 +100,7 @@ Public endpoint.
 
 ### Create Card
 Private endpoint accessible only to users who are logged in.  
+Integration with AWS S3 is available - users should upload a photo of their card and it is stored in S3.  
 Adds a new card to the user's collection. 
 
 #### Request
@@ -161,7 +162,8 @@ Users can only see their own collection - if they request to see the collection 
 ### Create Trade
 Private endpoint accessible only to users who are logged in.  
 Propose a trade with another trader.  
-Users cannot create trades with themselves - there is a decorator validating that the counterparty_id != current user id.
+Users cannot create trades with themselves - there is a decorator validating that the counterparty_id != current user id.  
+Integration with AWS SES has been done - when a trade is posted, the counterparty should receive an email about the event.  
 TODO: handle errors when the counterparty does not exist in the database or does not own the requested cards.
 
 #### Request
@@ -190,9 +192,7 @@ Users can only see details of trades that they are parties to - if they request 
 `GET /trade/<id>/`
 
     curl --location --request GET 'http://127.0.0.1:5000/trade/3/' \
-    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjYsImV4cCI6MTY2MTYyMTgzNn0.2zjHdVHpXkMgDF4VK-gnfP54P5CAHZgmrRW28SqnOc8' \
-    --header 'Content-Type: application/json' \
-    --data-raw ''
+    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjYsImV4cCI6MTY2MTYyMTgzNn0.2zjHdVHpXkMgDF4VK-gnfP54P5CAHZgmrRW28SqnOc8' 
 
 #### Response
 
@@ -202,4 +202,105 @@ Users can only see details of trades that they are parties to - if they request 
         "created_on": "2022-08-25T20:38:44.779071",
         "status": "pending",
         "id": 3
+    }
+
+### Approve Trade
+Private endpoint accessible only to users who are logged in.  
+Approve a trade proposed by another trader.  
+Only the counterparty to a trade can approve it. If you are not a trade counterparty, you will get a Forbidden response.  
+Only a trade in status `Pending` can be approved.  
+Once a trade is approved, an update to the cards table is made - card ownership is changed for the cards listed in the trade.
+
+#### Request
+
+`PUT /trade/<id>/approve/`
+
+    curl --location --request PUT 'http://127.0.0.1:5000/trade/3/approve/' \
+    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjYsImV4cCI6MTY2MTYyMjgzNn0.f--LDQhzadS7I8vuT5JsWlNBgOqXiNVwJllhWqP-DEU'
+
+#### Response
+
+`HTTP/1.1 200 OK`
+
+    {
+        "transferred_to_requester": [
+            3
+        ],
+        "status": "approved",
+        "transferred_to_counterparty": [
+            2
+        ],
+        "id": 3
+    }
+
+### Reject Trade
+Private endpoint accessible only to users who are logged in.  
+Approve a trade proposed by another trader.  
+Only the counterparty to a trade can reject it. If you are not a trade counterparty, you will get a Forbidden response.  
+Only a trade in status `Pending` can be rejected.  
+No changes to card ownership are made.
+
+#### Request
+
+`PUT /trade/<id>/reject/`
+
+    curl --location --request PUT 'http://127.0.0.1:5000/trade/3/reject/' \
+    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjYsImV4cCI6MTY2MTYyMjgzNn0.f--LDQhzadS7I8vuT5JsWlNBgOqXiNVwJllhWqP-DEU' 
+
+#### Response
+
+`HTTP/1.1 200 OK`
+
+    {
+        "transferred_to_requester": [],
+        "status": "rejected",
+        "transferred_to_counterparty": [],
+        "id": 3
+    }
+
+### Get Cards for Trade
+Private endpoint accessible only to users who are logged in.  
+Get all the cards in the cards table that are tradeable. This is required so the user can pick the cards he/she wants to trade with another player.  
+
+`GET /cards/tradeable/`
+
+    curl --location --request GET 'http://127.0.0.1:5000/cards/tradeable' \
+    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjYsImV4cCI6MTY2MTYyMTgzNn0.2zjHdVHpXkMgDF4VK-gnfP54P5CAHZgmrRW28SqnOc8'
+
+#### Response
+`HTTP/1.1 200 OK`
+
+    {
+        "cards": [
+            {
+                "set": "Test Set",
+                "tradeable": true,
+                "owner_id": "1",
+                "foil": false,
+                "name": "Test Card 2",
+                "condition": "mint"
+            }
+        ]
+    }
+
+### Get Trades
+Private endpoint accessible only to users who are logged in.  
+Get the details of all trade to which you are a party.  
+Users can only see details of trades that they are parties to - if they request to see trades of other users, they will get a Forbidden response.
+
+#### Request
+
+`GET /trade/<trade_id>`
+
+    curl --location --request GET 'http://127.0.0.1:5000/trade/3' \
+    --header 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjEsImV4cCI6MTY2MTYyMjg4M30.JjguFg934TL56gotCdQKkDaNjZNwX9ztVbPPrNt8J6w'
+
+#### Response 
+
+`HTTP/1.1 200 OK`
+
+    {
+        "id": 3,
+        "created_on": "2022-08-25T20:38:44.779071",
+        "status": "rejected"
     }

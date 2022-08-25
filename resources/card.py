@@ -26,4 +26,4 @@ class CardsTradeableResource(Resource):
         cards = CardManager.get_cards_for_trade(uid)
         data = {"cards": cards}
         resp = CardsTradeableResponseSchema().dump(data)
-        return resp, 201
+        return resp, 200
