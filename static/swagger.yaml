@@ -37,6 +37,27 @@ paths:
           description: Successful operation
         '405':
           description: Validation exception
+  /login/:
+    post:
+      tags:
+        - user
+      summary: Login to application
+  /card/:
+    post:
+      tags:
+        - card
+      summary: Add card to collection
+  /trade/:
+    post:
+      tags:
+        - trade
+      summary: Create a new trade
+  /trade/{id}:
+    get:
+      tags:
+        - trade
+      summary: Get trade by trade ID
+      description: 
 components:
   schemas:
     User:

@@ -21,7 +21,6 @@ class TestTrade(TestCase):
     def setUp(self):
         db.init_app(self.app)
         db.create_all()
-        self.headers, user = get_headers_with_authorization_and_user()
 
     def tearDown(self):
         db.session.remove()
@@ -56,8 +55,7 @@ class TestTrade(TestCase):
         }
         self.client.post("/card/", headers=self.headers_2, json=card_2)
 
-        # traders are 3 because we already created one for the first test
-        assert len(TraderModel.query.all()) == 3
+        assert len(TraderModel.query.all()) == 2
         assert len(Card.query.all()) == 2
 
         trades = Trade.query.all()
@@ -67,19 +65,3 @@ class TestTrade(TestCase):
         trades = Trade.query.all()
         assert len(trades) == 1
         assert resp.status_code == 201
-
-    def test_create_trade_schema_missing_fields_raises(self):
-        trades = Trade.query.all()
-        assert len(trades) == 0
-        data = {}
-        resp = self.client.post(self.url, headers=self.headers, json=data)
-        self.assert400(resp)
-
-        assert resp.json["message"] == {
-            "counterparty_cards": ["Missing data for required field."],
-            "counterparty_id": ["Missing data for required field."],
-            "requester_cards": ["Missing data for required field."],
-        }
-
-        trades = Trade.query.all()
-        assert len(trades) == 0
