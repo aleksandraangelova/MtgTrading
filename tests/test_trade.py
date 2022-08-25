@@ -76,7 +76,6 @@ class TestTrade(TestCase):
         assert len(TraderModel.query.all()) == 3
         assert len(Card.query.all()) == 2
 
-        traders = TraderModel.query.all()
         trades = Trade.query.all()
         assert len(trades) == 0
         # IDs are kept several times in the DB

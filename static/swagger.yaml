@@ -68,6 +68,24 @@ paths:
         - trade
       summary: Delete a trade you have created and is still in pending status.
       description: Private endpoint accessible only to users who are logged in. Delete a trade you have created and is still in pending status. Only the trade creator can access this endpoint. If you try to delete someone else's trade or an approved/rejected trade, you will get a Forbidden message.  If a trade is successfully deleted, it is removed from the trade table.
+  /trade/{id}/approve:
+    put:
+      tags:
+        - trade
+      summary: Approve a trade proposed by another trader that is in Pending status.
+      description: Private endpoint accessible only to users who are logged in. Approve a trade proposed by another trader. Only the counterparty to a trade can approve it. If you are not a trade counterparty, you will get a Forbidden response. Only a trade in status `Pending` can be approved. Once a trade is approved, an update to the cards table is made - card ownership is changed for the cards listed in the trade.
+  /trade/{id}/reject:
+    put:
+      tags:
+        - trade
+      summary: Reject a trade proposed by another trader that is in Pending status.
+      description: Private endpoint accessible only to users who are logged in. Reject a trade proposed by another trader. Only the counterparty to a trade can reject it. If you are not a trade counterparty, you will get a Forbidden response. Only a trade in status `Pending` can be rejected.
+  /trader/{id}/cards:
+    get:
+      tags:
+        - user
+      summary: Gets the cards available in a user's collection.
+      description: Private endpoint accessible only to users who are logged in. Gets the cards available in a user's collection. Users can only see their own collection - if they request to see the collection of another user, they will get a Forbidden response.
 components:
   schemas:
     User:
