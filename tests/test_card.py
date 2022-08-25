@@ -18,7 +18,7 @@ from tests.helpers import (
 )
 
 
-class TestComplaint(TestCase):
+class TestCard(TestCase):
     url = "/card/"
 
     def create_app(self):
