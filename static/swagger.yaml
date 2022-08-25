@@ -52,12 +52,22 @@ paths:
       tags:
         - trade
       summary: Create a new trade
-  /trade/{id}:
+  /trade/{id}/:
     get:
       tags:
         - trade
       summary: Get trade by trade ID
-      description: 
+      description: Private endpoint accessible only to users who are logged in. Get the details of all trade to which you are a party. Users can only see details of trades that they are parties to - if they request to see trades of other users, they will get a Forbidden response.
+    put:
+      tags:
+        - trade
+      summary: Update trade you have created which is still in Pending status.
+      description: Private endpoint accessible only to users who are logged in. Update a trade you have created and is still in pending status.  Only the trade creator can access this endpoint.  If you try to update someone else's trade or an approved/rejected trade, you will get a Forbidden message.  The trade is updated with the information sent in the request.
+    delete:
+      tags:
+        - trade
+      summary: Delete a trade you have created and is still in pending status.
+      description: Private endpoint accessible only to users who are logged in. Delete a trade you have created and is still in pending status. Only the trade creator can access this endpoint. If you try to delete someone else's trade or an approved/rejected trade, you will get a Forbidden message.  If a trade is successfully deleted, it is removed from the trade table.
 components:
   schemas:
     User:

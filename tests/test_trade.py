@@ -21,10 +21,27 @@ class TestTrade(TestCase):
     def setUp(self):
         db.init_app(self.app)
         db.create_all()
+        self.headers, user = get_headers_with_authorization_and_user()
 
     def tearDown(self):
         db.session.remove()
         db.drop_all()
+
+    def test_create_trade_schema_missing_fields_raises(self):
+        trades = Trade.query.all()
+        assert len(trades) == 0
+        data = {}
+        resp = self.client.post(self.url, headers=self.headers, json=data)
+        self.assert400(resp)
+
+        assert resp.json["message"] == {
+            "counterparty_cards": ["Missing data for required field."],
+            "counterparty_id": ["Missing data for required field."],
+            "requester_cards": ["Missing data for required field."],
+        }
+
+        trades = Trade.query.all()
+        assert len(trades) == 0
 
     @patch.object(SESService, "send_email")
     @patch.object(S3Service, "upload_photo", return_value="some.s3.url")
@@ -55,12 +72,15 @@ class TestTrade(TestCase):
         }
         self.client.post("/card/", headers=self.headers_2, json=card_2)
 
-        assert len(TraderModel.query.all()) == 2
+        # there is already a trader added in the setUp
+        assert len(TraderModel.query.all()) == 3
         assert len(Card.query.all()) == 2
 
+        traders = TraderModel.query.all()
         trades = Trade.query.all()
         assert len(trades) == 0
-        data = {"requester_cards": [1], "counterparty_id": 1, "counterparty_cards": [2]}
+        # IDs are kept several times in the DB
+        data = {"requester_cards": [1], "counterparty_id": 7, "counterparty_cards": [2]}
         resp = self.client.post(self.url, headers=self.headers_1, json=data)
         trades = Trade.query.all()
         assert len(trades) == 1
